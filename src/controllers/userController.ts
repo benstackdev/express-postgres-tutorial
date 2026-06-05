@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getAllUsernames, insertUsername } from "../db/queries.js";
+import { deleteAllUsernames, getAllUsernames, insertUsername, searchUsername } from "../db/queries.js";
 
 const usernamesGet = async (req: Request, res: Response) => {
   const usernameList = await getAllUsernames();
@@ -12,7 +12,27 @@ const createUsernamePost = async (req: Request, res: Response) => {
   res.redirect("/");
 };
 
+const searchUsernamesGet = async (req: Request, res: Response) => {
+  try {
+    if (typeof req.query.term === "string") {
+      const results = await searchUsername(req.query.term);
+      console.log("Search results: ", results);
+    } else console.log(`${req.query.term} not a string`);
+
+    res.redirect("/");
+  } catch (error) {
+    throw error;
+  }
+};
+
+const usernamesDelete = async (req: Request, res: Response) => {
+  await deleteAllUsernames();
+  res.redirect("/");
+};
+
 export {
   usernamesGet,
-  createUsernamePost
+  createUsernamePost,
+  searchUsernamesGet,
+  usernamesDelete
 };
